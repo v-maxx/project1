@@ -8,12 +8,12 @@ const Footer = () => {
                 <div className="grid grid-cols-2 md:col-span-3 lg:grid-cols-6 gap-y-16 gap-x-12">
                     <div className="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
                         <div className={'flex items-center justify-start gap-2'}>
-                            <Image width={120} height={120} className="w-auto h-9" src="/v_logo.png" alt="" />
-                            <span className="ml-2 text-2xl font-bold text-transparent bg-gradient-to-r bg-clip-text from-[#57b9e3] to-[#b4cfb4]">ViewsMax</span>
+                            {/*<Image width={120} height={120} className="w-auto h-9" src="/v_logo.png" alt="" />*/}
+                            {/*<span className="ml-2 text-2xl font-bold text-transparent bg-gradient-to-r bg-clip-text from-[#57b9e3] to-[#b4cfb4]">Application manager</span>*/}
 
                         </div>
 
-                        <p className="text-base leading-relaxed text-gray-600 mt-7">Get Paid to Watch, Turn YouTube Viewing into Earnings | Views Max </p>
+                        {/*<p className="text-base leading-relaxed text-gray-600 mt-7">Get Paid to Watch, Turn YouTube Viewing into Earnings | Views Max </p>*/}
 
                         {/*<ul className="flex items-center space-x-3 mt-9">*/}
                         {/*    <li>*/}
@@ -61,12 +61,12 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <p className="text-sm font-semibold tracking-widest text-gray-400 uppercase">Company</p>
+                        {/*<p className="text-sm font-semibold tracking-widest text-gray-400 uppercase">Company</p>*/}
 
                         <ul className="mt-6 space-y-4">
-                            <li>
-                                <a href="/about-us" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> About Us</a>
-                            </li>
+                            {/*<li>*/}
+                            {/*    <a href="/about-us" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> About Us</a>*/}
+                            {/*</li>*/}
 
                             {/*<li>*/}
                             {/*    <a href="#" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Features </a>*/}
@@ -83,12 +83,12 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <p className="text-sm font-semibold tracking-widest text-gray-400 uppercase">Help</p>
+                        {/*<p className="text-sm font-semibold tracking-widest text-gray-400 uppercase">Help</p>*/}
 
                         <ul className="mt-6 space-y-4">
-                            <li>
-                                <a href="/contact-us" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Contact Us </a>
-                            </li>
+                            {/*<li>*/}
+                            {/*    <a href="/contact-us" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Contact Us </a>*/}
+                            {/*</li>*/}
 
                             {/*<li>*/}
                             {/*    <a href="#" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Delivery Details </a>*/}
@@ -98,9 +98,9 @@ const Footer = () => {
                             {/*    <a href="#" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Terms & Conditions </a>*/}
                             {/*</li>*/}
 
-                            <li>
-                                <a href="/privacy-policy" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Privacy Policy </a>
-                            </li>
+                            {/*<li>*/}
+                            {/*    <a href="/privacy-policy" title="" className="flex text-sm text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"> Privacy Policy </a>*/}
+                            {/*</li>*/}
                         </ul>
                     </div>
 
@@ -120,7 +120,7 @@ const Footer = () => {
 
                 <hr className="mt-16 mb-10 border-gray-200" />
 
-                <p className="text-sm text-center text-gray-600">© Copyright 2024, All Rights Reserved by <strong className={'text-xl'}>ViewsMax</strong></p>
+                {/*<p className="text-sm text-center text-gray-600">© Copyright 2024, All Rights Reserved by <strong className={'text-xl'}>Application Manager</strong></p>*/}
             </div>
         </section>
 

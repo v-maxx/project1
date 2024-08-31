@@ -7,7 +7,8 @@ import {Button} from "@/components/ui/button";
 import {signOut, useSession} from "next-auth/react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {useAuth} from "@/store/store";
+import {useAuth} from "@/redux/store";
+
 
 const IsLoggedIn = () => {
     const session = useSession()
@@ -27,29 +28,29 @@ const IsLoggedIn = () => {
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>{session?.data?.user?.email}</DropdownMenuLabel>
                         <DropdownMenuSeparator/>
-                        <Link href={'/dashboard'}>
-                            <DropdownMenuItem >Dashboard</DropdownMenuItem>
+                        {/*<Link href={'/dashboard'}>*/}
+                        {/*    <DropdownMenuItem >Dashboard</DropdownMenuItem>*/}
 
-                        </Link>
+                        {/*</Link>*/}
 
-                        <DropdownMenuSeparator/>
+                        {/*<DropdownMenuSeparator/>*/}
 
-                        <Link href={'/referral'}>
-                            <DropdownMenuItem>Referral</DropdownMenuItem>
+                        {/*<Link href={'/referral'}>*/}
+                        {/*    <DropdownMenuItem>Referral</DropdownMenuItem>*/}
 
-                        </Link>
+                        {/*</Link>*/}
 
 
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuItem onClick={async ()=> {
-                            await router.push('/account')
-                        }}>Profile</DropdownMenuItem>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuItem onClick={async ()=> {
-                            await router.push('/withdraw')
-                        }}>Withdraw</DropdownMenuItem>
-                        <DropdownMenuSeparator/>
+                        {/*<DropdownMenuSeparator/>*/}
+                        {/*<DropdownMenuSeparator/>*/}
+                        {/*<DropdownMenuItem onClick={async ()=> {*/}
+                        {/*    await router.push('/account')*/}
+                        {/*}}>Profile</DropdownMenuItem>*/}
+                        {/*<DropdownMenuSeparator/>*/}
+                        {/*<DropdownMenuItem onClick={async ()=> {*/}
+                        {/*    await router.push('/withdraw')*/}
+                        {/*}}>Withdraw</DropdownMenuItem>*/}
+                        {/*<DropdownMenuSeparator/>*/}
                         <DropdownMenuItem onClick={async () => await signOut()}>Logout</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu> :

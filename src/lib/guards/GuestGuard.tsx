@@ -3,7 +3,7 @@
 
 import { ReactNode, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/store/store'
+import {useAuth} from "@/redux/store";
 
 interface GuestGuardProps {
   children: ReactNode

@@ -47,8 +47,7 @@ export default function ApplicationsTable() {
 
     return (
         <Table>
-            <TableCaption>A list of recent applications</TableCaption>
-            <TableHeader>
+            <TableHeader className={'bg-yellow-100'}>
                 <TableRow>
                     <TableHead>ID</TableHead>
                     <TableHead>Applicant Name</TableHead>

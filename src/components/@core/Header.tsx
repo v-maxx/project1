@@ -66,13 +66,13 @@ setIsOpen(false)
 
 
     return (
-        <nav className="bg-gray-100  from-[#57b9e3] to-[#b4cfb4] backdrop-blur-md dark:bg-gray-900 sticky w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-            <div className="container flex  items-center justify-between py-2">
+        <nav className="   bg-gray-100 from-[#57b9e3] to-[#b4cfb4] backdrop-blur-md dark:bg-gray-900 sticky w-full z-20 top-0 start-0 border-b  dark:border-gray-600">
+            <div className="container mx-auto flex  items-center justify-between py-2">
                 <Link className="flex items-center justify-center" href="/">
-                    <Image src={'/v_logo.png'} width={70} height={20} alt={'logo'}/>
-                    <span className="ml-2 text-2xl font-bold text-transparent bg-gradient-to-r bg-clip-text from-[#57b9e3] to-[#b4cfb4]">ViewsMax</span>
+                    {/*<Image src={'/v_logo.png'} width={70} height={20} alt={'logo'}/>*/}
+                    <span className="ml-2 text-2xl font-bold text-black">Application Manager</span>
                 </Link>
-                <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                <div className=" flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                     <div className={'flex'}>
                                 <NavBar/>
                                 <IsLoggedIn/>

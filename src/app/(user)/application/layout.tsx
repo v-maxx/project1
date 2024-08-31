@@ -1,36 +1,35 @@
 'use client'
 import "@/app/globals.css"
 import React, {useState} from 'react';
-import Link from 'next/link';
-import {Button} from '@/components/ui/button';
-import {
-    DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {SettingsIcon} from "lucide-react";
-import {signOut} from "next-auth/react";
-import {Badge, Box, Card, Flex, IconButton, Inset, Spinner, Strong, Switch} from "@radix-ui/themes";
-import {MagnifyingGlassIcon} from "@radix-ui/react-icons";
 
 import '@radix-ui/themes/styles.css';
 import Guard from "@/lib/guards/Guard";
-
+import {extractRouterConfig} from "uploadthing/server";
+import {ourFileRouter} from "@/app/api/uploadthing/core";
+import {NextSSRPlugin} from "@uploadthing/react/next-ssr-plugin";
 
 
 export default function Layout({children}: Readonly<{
     children: React.ReactNode;
 
 
-
 }>) {
-
 
 
     return (
 
         <section>
             <Guard guestGuard={false} authGuard={true}>
-
-                    {children}
+                <NextSSRPlugin
+                    /**
+                     * The `extractRouterConfig` will extract **only** the route configs
+                     * from the router to prevent additional information from being
+                     * leaked to the client. The data passed to the client is the same
+                     * as if you were to fetch `/api/uploadthing` directly.
+                     */
+                    routerConfig={extractRouterConfig(ourFileRouter)}
+                />
+                {children}
 
             </Guard>
 

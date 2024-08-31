@@ -10,16 +10,13 @@ import axios from 'axios'
 
 // ** Config
 import {boolean} from 'yup'
-
 import authConfig from '@/lib/configs/auth'
+
 
 // ** Types
 import type {AuthValuesType, ErrCallbackType, LoginParams, UserDataType} from './types'
-import {getDb} from "@/lib/db";
-import bcrypt from "bcrypt";
 import {getSession, useSession} from "next-auth/react";
 import {fetchLinks, fetchUserData} from "@/lib/helpers/functions";
-import {DataContext} from "@/context/DataContext";
 
 
 // ** Defaults
@@ -45,7 +42,6 @@ type Props = {
 const AuthProvider = ({children}: Props) => {
     // ** States
     const [user, setUser] = useState<any | null>(defaultProvider.user)
-    const {setLinksData, setLoading: setLinksLoading} = useContext(DataContext);
 
     const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
     const [actionLoading, setActionLoading] = useState<boolean>(defaultProvider.actionLoading)
@@ -75,13 +71,13 @@ const AuthProvider = ({children}: Props) => {
     // }, [user]);
 
     useEffect(() => {
-        const storedToken = (window.localStorage.getItem(authConfig.storageTokenKeyName)!)
-
-        const headers = {
-            headers: {
-                Authorization: `Bearer ${storedToken}`
-            }
-        }
+        // const storedToken = (window.localStorage.getItem(authConfig.storageTokenKeyName)!)
+        //
+        // const headers = {
+        //     headers: {
+        //         Authorization: `Bearer ${storedToken}`
+        //     }
+        // }
 
         const initAuth = async (): Promise<void> => {
             setLoading(true)
@@ -99,18 +95,11 @@ const AuthProvider = ({children}: Props) => {
 
 
             if (session?.user) {
-             const userData= await fetchUserData()
+             // const userData= await fetchUserData()
 
 
                 // console.log('user data--:', userData)
-                setUser(userData)
-
-                setLinksLoading(true)
-                const links = await fetchLinks()
-
-                setLinksData(links.links)
-                setLinksLoading(false)
-
+                setUser(session.user)
 
                 // console.log('user in session', session?.user)
                 setLoading(false)

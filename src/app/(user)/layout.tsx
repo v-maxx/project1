@@ -13,17 +13,17 @@ import {MenuIcon, SettingsIcon} from "lucide-react";
 import {signOut, useSession} from "next-auth/react";
 
 import {Badge, Box, Card, Flex, IconButton, Inset, Spinner, Strong, Switch} from "@radix-ui/themes";
-import {MagnifyingGlassIcon} from "@radix-ui/react-icons";
 
 import '@radix-ui/themes/styles.css';
-import UpgradeComponent from "@/app/@core/molecules/Upgrade";
 import {AuthProvider} from "@/lib/context/AuthContext";
 import Guard from "@/lib/guards/Guard";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {usePathname} from "next/navigation";
 import {toast} from "react-toastify";
 import isActive = toast.isActive;
-import {useAuth} from "@/store/store";
+import {useAuth} from "@/redux/store";
+import Header from "@/components/@core/Header";
+import Footer from "@/components/@core/Footer";
 
 
 
@@ -49,17 +49,19 @@ export default function DashboardLayout({children}: Readonly<{
     return (
 
         <section>
-            <div className="container mx-auto ">
-                <div className="border border-gray-200 rounded-lg dark:border-gray-700 mt-2 shadow-lg">
+
+                <div className="">
                     <Suspense>
                     <AuthProvider>
+                        <Header/>
                         {/*<Guard authGuard={true} guestGuard={false}>*/}
                     {children}
                         {/*</Guard>*/}
+                        <Footer/>
                     </AuthProvider>
                     </Suspense>
                 </div>
-            </div>
+
 
 
         </section>

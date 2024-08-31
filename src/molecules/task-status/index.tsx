@@ -1,9 +1,5 @@
 'use client'
 import React, {useContext, useEffect, useState} from 'react';
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {UsersIcon} from "lucide-react";
-import {DataContext} from "@/context/DataContext";
-import Spinner from "@/molecules/spinner";
 
 const TaskStatus = ({id,setTaskAvailable}:any) => {
     const [isCompleted, setIsCompleted] = useState(false)

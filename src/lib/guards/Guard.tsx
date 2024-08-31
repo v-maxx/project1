@@ -5,8 +5,8 @@ import { ReactNode } from 'react'
 import AuthGuard from './AuthGuard'
 import GuestGuard from './GuestGuard'
 
-import {useAuth} from "@/store/store";
 import Spinner from "@/molecules/spinner";
+import {useAuth} from "@/redux/store";
 
 interface GuardProps {
   children: ReactNode

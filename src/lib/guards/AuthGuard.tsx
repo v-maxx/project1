@@ -3,8 +3,9 @@
 
 import { ReactNode, ReactElement, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { useAuth } from '@/store/store'
+
 import {useSession} from "next-auth/react";
+import {useAuth} from "@/redux/store";
 
 interface AuthGuardProps {
   children: ReactNode
