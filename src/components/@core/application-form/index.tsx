@@ -12,6 +12,8 @@ import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {selectApplicationState, selectCount, setApplicationState} from "@/redux/features/user/userSlice";
 import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import FileUploader from "@/components/@core/file-uploader";
+import {toast} from "react-toastify";
+import {useRouter} from "next/navigation";
 
 // Components
 
@@ -24,6 +26,7 @@ interface FormData {
     mobile: string;
     verification: boolean;
     address: string;
+    address1: string;
     residenceType: string;
     occupation: string;
     category: string;
@@ -43,7 +46,8 @@ const initialValues: FormData = {
     mobile: '+91',
     verification: false,
     address: '',
-    residenceType: '',
+    address1: '',
+    residenceType: 'Permanent',
     occupation: '',
     category: '',
     email: '',
@@ -61,7 +65,7 @@ const validationSchemas = [
         documentNumber: Yup.string().required('Document Number is required'),
 
         frontPhoto: Yup.mixed().nullable().required('Front Photo is required'),
-        backPhoto: Yup.mixed().nullable().required('Back Photo is required'),
+        backPhoto: Yup.mixed().nullable().optional(),
     }),
     Yup.object({
         mobile: Yup.string()
@@ -74,13 +78,20 @@ const validationSchemas = [
     }),
     Yup.object({
         address: Yup.string().required('Address is required'),
+        address1: Yup.string().when('residenceType', {
+            is: 'temporary',  // correctly checking if the value is 'temporary'
+            then: (schema) => schema.required('Address1 is required'),  // make it required if condition is true
+            otherwise: (schema) =>schema.optional(),  // optional if condition is false
+        }),
         residenceType: Yup.string().required('Residence Type is required'),
         occupation: Yup.string().required('Occupation is required'),
         category: Yup.string().required('Category is required'),
-        email: Yup.string().email('Invalid email').required('Email is required'),
+        email: Yup.string()
+            .required('Email is required')
+            .email('Invalid email format'),
     }),
     Yup.object({
-        photo: Yup.mixed().nullable().required('Photo is required'),
+        photo: Yup.mixed().nullable().required('Please Upload Photo'),
     }),
 ];
 
@@ -89,17 +100,45 @@ const ApplicationFormComponent: React.FC = () => {
     const [uploadedFrontFile, setUploadedFrontFile] = useState<any>(undefined)
     const [uploadedBackFile, setUploadedBackFile] = useState<any>(undefined)
     const [uploadedPhotoFile, setUploadedPhotoFile] = useState<any>(undefined)
-
+const router=useRouter()
     // useEffect(()=>{
     //     if (uploadedFile.length>0){
     //         console.log('uploadedFile',uploadedFile[0])
     //     }
     // },[uploadedFile])
 
+const submitApplication=async (formData:any)=>{
+    try {
+        const response = await fetch('/api/create-application', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Include any other headers if needed
+            },
+            body: JSON.stringify(formData)
+        });
 
+        const result = await response.json();
 
-
-    const [step, setStep] = React.useState<number>(1);
+        if (response.ok) {
+            // alert('Application created successfully');
+            console.log('Result:', result);
+            toast.success('Password changed successfully.');
+            router.replace('/dashboard')
+            // Handle successful result
+        } else {
+            // alert('Failed to create application');
+            console.error('Error:', result.error);
+            toast.error(result.details);
+            // Handle error result
+        }
+    } catch (error:any) {
+        // alert('An unexpected error occurred');
+        console.error('Error:', error);
+        toast.error(error.message);
+    }
+}
+    const [step, setStep] = React.useState<number>(4);
 const dispatch=useAppDispatch()
     const application=useAppSelector((state:any) => state.applicationState)
     useEffect(() => {
@@ -111,8 +150,8 @@ const dispatch=useAppDispatch()
     const formik = useFormik<FormData>({
         initialValues,
         validationSchema: validationSchemas[step - 1], // Apply the correct validation schema for the current step
-        onSubmit: (values) => {
-            console.log(values);
+        onSubmit: async (values) => {
+           await submitApplication(values)
         },
     });
 
@@ -141,11 +180,6 @@ const dispatch=useAppDispatch()
         setStep((prev) => Math.max(prev - 1, 1));
     };
 
-    const sendOTP = () => {
-        // Logic to send OTP to the provided mobile number
-        console.log("Sending OTP to mobile number:", formik.values.mobile);
-    };
-
 
     useEffect(() => {
         console.log('applicationStaet-',selectApplicationState)
@@ -160,7 +194,7 @@ const dispatch=useAppDispatch()
             case 1:
                 return <Step1 formik={formik} />;
             case 2:
-                return <Step2 formik={formik} sendOTP={sendOTP} />;
+                return <Step2 formik={formik} />;
             case 3:
                 return <Step3 formik={formik} />;
             case 4:
@@ -172,11 +206,11 @@ const dispatch=useAppDispatch()
 
     return (
         <Card className="w-full max-w-3xl mx-auto">
-            <CardHeader>
-                <CardTitle>Application Form - Step {step} of 4</CardTitle>
+            <CardHeader >
+                <CardTitle>Application - Step {step}</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="mb-4 bg-secondary h-2 rounded-full">
+                <div className="mb-16 bg-secondary h-2 rounded-full">
                     <div
                         className="bg-primary h-2 rounded-full transition-all duration-300 ease-in-out"
                         style={{ width: `${(step / 4) * 100}%` }}
@@ -291,7 +325,7 @@ const Step1: React.FC<{ formik: any }> = ({ formik,setUploadedFrontFile,
             ) : null}
         </div>
         <div className="space-y-2">
-                    <Label htmlFor="backPhoto">Upload Back Photo</Label>
+                    <Label htmlFor="backPhoto">Upload Back Photo (Optional)</Label>
             {/*<Input*/}
             {/*    id="backPhoto"*/}
             {/*    name="backPhoto"*/}
@@ -304,13 +338,17 @@ const Step1: React.FC<{ formik: any }> = ({ formik,setUploadedFrontFile,
             {/*    }}*/}
             {/*        />*/}
             <FileUploader setUploadFile={setUploadedBackFile} currentUrl={formik.values.backPhoto} callbackDelete={()=>formik.setFieldValue('backPhoto','')}  callback={(value:string)=>formik.setFieldValue('backPhoto',value)}/>
-                </div>
+            {formik.touched.backPhoto && formik.errors.backPhoto ? (
+                <div className="text-red-500 text-xs">{formik.errors.backPhoto}</div>
+            ) : null}
+
+        </div>
             </>
         )}
     </div>
 );
 
-const Step2: React.FC<{ formik: any; sendOTP: () => void }> = ({ formik, sendOTP }) => (
+const Step2: React.FC<{ formik: any; }> = ({ formik }) => (
     <div className="space-y-4">
         <div className="flex flex-col items-center">
             <h1 className="font-bold text-xl text-center mb-5">
@@ -355,21 +393,42 @@ const Step3: React.FC<{ formik: any }> = ({ formik }) => (
             ) : null}
         </div>
         <div className="space-y-2">
-            <Label>Residence Type</Label>
+            <Label>Select Residence Type</Label>
             <RadioGroup
                 value={formik.values.residenceType}
                 onValueChange={(value) => formik.setFieldValue('residenceType', value)}
             >
                 <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="temporary" id="temporary" />
-                    <Label htmlFor="temporary">Temporary</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="permanent" id="permanent" />
+                    <RadioGroupItem value="Permanent" id="permanent" />
                     <Label htmlFor="permanent">Permanent</Label>
                 </div>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Temporary" id="temporary" />
+                    <Label htmlFor="Temporary">Temporary</Label>
+                </div>
+
             </RadioGroup>
+            {formik.touched.residenceType && formik.errors.residenceType ? (
+                <div className="text-red-500 text-xs">{formik.errors.residenceType}</div>
+            ) : null}
+
         </div>
+
+        {formik.values.residenceType==='Temporary' && <div className="space-y-2">
+            <Label htmlFor="address1">Permanent Address</Label>
+            <Input
+                id="address1"
+                name="address1"
+                value={formik.values.address1}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+            />
+            {formik.touched.address1 && formik.errors.address1 ? (
+                <div className="text-red-500 text-xs">{formik.errors.address1}</div>
+            ) : null}
+        </div>}
+
+
         <div className="space-y-2">
             <Label htmlFor="occupation">Occupation</Label>
             <Input
@@ -379,6 +438,9 @@ const Step3: React.FC<{ formik: any }> = ({ formik }) => (
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
             />
+            {formik.touched.occupation && formik.errors.occupation ? (
+                <div className="text-red-500 text-xs">{formik.errors.occupation}</div>
+            ) : null}
         </div>
         <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
@@ -390,10 +452,14 @@ const Step3: React.FC<{ formik: any }> = ({ formik }) => (
                     <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="gen">General</SelectItem>
-                    <SelectItem value="obc">OBC</SelectItem>
+                    <SelectItem value="GEN">General</SelectItem>
+                    <SelectItem value="OBC">OBC</SelectItem>
+                    <SelectItem value="STSC">ST/SC</SelectItem>
                 </SelectContent>
             </Select>
+            {formik.touched.category && formik.errors.category ? (
+                <div className="text-red-500 text-xs">{formik.errors.category}</div>
+            ) : null}
         </div>
         <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -412,19 +478,22 @@ const Step3: React.FC<{ formik: any }> = ({ formik }) => (
     </div>
 );
 
-const Step4: React.FC<{ formik: any }> = ({ formik }) => (
+const Step4: React.FC<{ formik: any }> = ({ formik ,
+                                              setUploadedPhotoFile}:any) => (
     <div className="space-y-4">
         <div className="space-y-2">
             <Label htmlFor="photo">Upload Photo</Label>
-            <Input
-                type="file"
-                id="photo"
-                name="photo"
-                onChange={(event:any) => {
-                    formik.setFieldValue("photo", event.currentTarget.files[0]);
-                }}
-                onBlur={formik.handleBlur}
-            />
+            {/*<Input*/}
+            {/*    type="file"*/}
+            {/*    id="photo"*/}
+            {/*    name="photo"*/}
+            {/*    onChange={(event:any) => {*/}
+            {/*        formik.setFieldValue("photo", event.currentTarget.files[0]);*/}
+            {/*    }}*/}
+            {/*    onBlur={formik.handleBlur}*/}
+            {/*/>*/}
+            <FileUploader setUploadFile={setUploadedPhotoFile} currentUrl={formik.values.photo} callbackDelete={()=>formik.setFieldValue('photo','')}  callback={(value:string)=>formik.setFieldValue('photo',value)}/>
+
             {formik.touched.photo && formik.errors.photo ? (
                 <div className="text-red-500 text-xs">{formik.errors.photo}</div>
             ) : null}

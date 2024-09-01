@@ -20,6 +20,8 @@ import {getApp, getApps, initializeApp} from "firebase/app";
 import {getAnalytics} from "firebase/analytics";
 import {Label} from "@/components/ui/label";
 import {toast} from "@/components/ui/use-toast";
+import {Badge} from "@/components/ui/badge";
+import {Check} from "lucide-react";
 
 
 
@@ -62,6 +64,12 @@ function OtpLogin({formik}:any) {
 
     const [isPending, startTransition] = useTransition();
 
+    useEffect(() => {
+       if (formik.values.verification){
+           setVerified(true)
+       }
+
+    }, []);
     useEffect(() => {
         let timer: NodeJS.Timeout;
         if (resendCountdown > 0) {
@@ -187,7 +195,7 @@ function OtpLogin({formik}:any) {
 
     return (
         <div className="flex flex-col justify-center items-center w-full">
-            {!confirmationResult && (
+            {!confirmationResult && !verified && (
 
                 <div className="space-y-2 w-full">
                     <Label htmlFor="mobile">Mobile</Label>
@@ -219,7 +227,7 @@ function OtpLogin({formik}:any) {
                 // </form>
             )}
 
-            {confirmationResult && (
+            {!verified && confirmationResult && (
                 <InputOTP maxLength={6} value={otp} onChange={(value) => setOtp(value)}>
                     <InputOTPGroup>
                         <InputOTPSlot index={0} />
@@ -234,8 +242,19 @@ function OtpLogin({formik}:any) {
                     </InputOTPGroup>
                 </InputOTP>
             )}
+            {
+                verified &&
+                <div>
 
-            <Button
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-200">
+                        <Check className="mr-1 h-6 w-8" />
+                        Verified
+                    </Badge>
+                </div>
+            }
+
+
+            {!verified && <Button
                 disabled={formik.errors.mobile || isPending || resendCountdown > 0}
                 onClick={() => requestOtp()}
                 className="mt-5"
@@ -245,7 +264,7 @@ function OtpLogin({formik}:any) {
                     : isPending
                         ? "Sending OTP"
                         : "Send OTP"}
-            </Button>
+            </Button>}
 
             <div className="p-10 text-center">
                 {error && <p className="text-red-500">{error}</p>}

@@ -9,36 +9,14 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Eye, Trash2 } from "lucide-react"
+import {useState} from "react";
 
 // Sample data for the table
-const applications = [
-    {
-        id: 1,
-        applicantName: "John Doe",
-        initiatedAt: "2023-05-01T09:00:00Z",
-        status: "Pending",
-    },
-    {
-        id: 2,
-        applicantName: "Jane Smith",
-        initiatedAt: "2023-05-02T14:30:00Z",
-        status: "Approved",
-    },
-    {
-        id: 3,
-        applicantName: "Bob Johnson",
-        initiatedAt: "2023-05-03T11:15:00Z",
-        status: "Rejected",
-    },
-    {
-        id: 4,
-        applicantName: "Alice Brown",
-        initiatedAt: "2023-05-04T16:45:00Z",
-        status: "Under Review",
-    },
-]
+
 
 export default function ApplicationsTable() {
+    const [applications, setApplications] = useState([])
+
     // Function to format the date
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
@@ -49,20 +27,52 @@ export default function ApplicationsTable() {
         <Table>
             <TableHeader className={'bg-yellow-100'}>
                 <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Applicant Name</TableHead>
-                    <TableHead>Initiated At</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>ID</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Name</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Father's Name</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Document Type</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Document Number</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Mobile</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Address</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Address1</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Residence Type</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Occupation</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Category</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Email</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Front Photo</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Back Photo</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Photo</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Status</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Initiated At</TableHead>
+                    <TableHead className={'min-w-max whitespace-nowrap'}>Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {applications.map((application) => (
+                {applications && applications.length > 0 ? applications.map((application:any) => (
                     <TableRow key={application.id}>
                         <TableCell>{application.id}</TableCell>
-                        <TableCell>{application.applicantName}</TableCell>
-                        <TableCell>{formatDate(application.initiatedAt)}</TableCell>
+                        <TableCell>{application.name}</TableCell>
+                        <TableCell>{application.fatherName}</TableCell>
+                        <TableCell>{application.documentType}</TableCell>
+                        <TableCell>{application.documentNumber}</TableCell>
+                        <TableCell>{application.mobile}</TableCell>
+                        <TableCell>{application.address}</TableCell>
+                        <TableCell>{application.address1}</TableCell>
+                        <TableCell>{application.residenceType}</TableCell>
+                        <TableCell>{application.occupation}</TableCell>
+                        <TableCell>{application.category}</TableCell>
+                        <TableCell>{application.email}</TableCell>
+                        <TableCell>
+                            <img src={application.frontPhoto} alt="Front Photo" className="h-10 w-10" />
+                        </TableCell>
+                        <TableCell>
+                            <img src={application.backPhoto} alt="Back Photo" className="h-10 w-10" />
+                        </TableCell>
+                        <TableCell>
+                            <img src={application.photo} alt="Photo" className="h-10 w-10" />
+                        </TableCell>
                         <TableCell>{application.status}</TableCell>
+                        <TableCell>{formatDate(application.createdAt)}</TableCell>
                         <TableCell>
                             <div className="flex space-x-2">
                                 <Button variant="outline" size="sm">
@@ -76,8 +86,13 @@ export default function ApplicationsTable() {
                             </div>
                         </TableCell>
                     </TableRow>
-                ))}
+                ) ) : <TableRow >
+                    <TableCell colSpan={12}>
+                        No Applications found
+                    </TableCell>
+                   </TableRow>}
             </TableBody>
         </Table>
+
     )
 }

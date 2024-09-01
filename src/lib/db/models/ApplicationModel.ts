@@ -7,12 +7,12 @@ interface IApplicationScheme extends Document {
     documentType: string;
     documentNumber: string;
     mobile: string;
-    otp: string;
     verification: boolean;
     address: string;
+    address1: string;
     residenceType: 'Temporary' | 'Permanent';
     occupation: string;
-    category: 'General' | 'OBC';
+    category: 'GEN' | 'OBC' | 'STSC';
     email: string;
     frontPhoto: string;
     backPhoto: string;
@@ -21,8 +21,7 @@ interface IApplicationScheme extends Document {
     initiatedBy: mongoose.Types.ObjectId; // Reference to a User
 }
 
-// Define the Mongoose schema for ApplicationScheme
-const ApplicationSchema: Schema<IApplicationScheme> = new mongoose.Schema<IApplicationScheme>(
+const ApplicationSchema: Schema<IApplicationScheme|any> = new mongoose.Schema<IApplicationScheme|any>(
     {
         name: {
             type: String,
@@ -46,10 +45,6 @@ const ApplicationSchema: Schema<IApplicationScheme> = new mongoose.Schema<IAppli
             type: String,
             required: [true, 'Mobile number is required'],
         },
-        otp: {
-            type: String,
-            required: [true, 'OTP is required'],
-        },
         verification: {
             type: Boolean,
             default: false,
@@ -57,6 +52,10 @@ const ApplicationSchema: Schema<IApplicationScheme> = new mongoose.Schema<IAppli
         address: {
             type: String,
             required: [true, 'Address is required'],
+        },
+        address1: {
+            type: String,
+            required: [false],
         },
         residenceType: {
             type: String,
@@ -69,7 +68,7 @@ const ApplicationSchema: Schema<IApplicationScheme> = new mongoose.Schema<IAppli
         },
         category: {
             type: String,
-            enum: ['General', 'OBC'],
+            enum: ['General', 'OBC', 'STSC'],
             required: [true, 'Category is required'],
         },
         email: {
@@ -94,19 +93,18 @@ const ApplicationSchema: Schema<IApplicationScheme> = new mongoose.Schema<IAppli
         },
         status: {
             type: String,
-            enum: ['Pending', 'Pending Payment', 'Completed'], // Corrected enum definition
-            required: [true, 'Status is required'], // Added error message for required field
+            enum: ['Pending', 'Pending Payment', 'Completed'],
+            required: [true, 'Status is required'],
         },
         initiatedBy: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User', // References the User model
-            required: true, // Ensure the field is always provided
+            ref: 'User',
+            required: true,
         },
     },
-    { timestamps: true } // Automatically adds createdAt and updatedAt fields
+    { timestamps: true }
 );
 
-// Export the model with TypeScript support
 const Application: Model<IApplicationScheme> = mongoose.models.Application || mongoose.model<IApplicationScheme | any>('Application', ApplicationSchema);
 
 export default Application;

@@ -58,7 +58,7 @@ const IsLoggedIn = () => {
                 ( <Link href={'/login'}>
                     <button
                         type="button"
-                        className="text-white bg-gradient-to-r from-[#57b9e3] to-[#b4cfb4]  focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700"
+                        className="text-white bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700"
                     >
                         Login
                     </button>

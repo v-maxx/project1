@@ -18,12 +18,34 @@ const Dashboard = () => {
 const router=useRouter()
 
 
+    const fetchAllApplications = async () => {
+        try {
+            const response = await fetch('/api/applications', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-    // useEffect(() => {
-        // (async () => {
-        //     await refetchUserData()
-        // })()
-    // }, []);
+            if (!response.ok) {
+                throw new Error('Failed to fetch applications');
+            }
+
+            const data = await response.json();
+            return data.applications;
+        } catch (error) {
+            console.error('Error fetching applications:', error);
+            throw error;
+        }
+    };
+
+
+
+    useEffect(() => {
+        (async () => {
+            await fetchAllApplications()
+        })()
+    }, []);
 
 
     return (<div className="flex w-full flex-col container mx-auto">
