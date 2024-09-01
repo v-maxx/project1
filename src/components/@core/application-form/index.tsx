@@ -138,7 +138,7 @@ const submitApplication=async (formData:any)=>{
         toast.error(error.message);
     }
 }
-    const [step, setStep] = React.useState<number>(4);
+    const [step, setStep] = React.useState<number>(1);
 const dispatch=useAppDispatch()
     const application=useAppSelector((state:any) => state.applicationState)
     useEffect(() => {

@@ -78,7 +78,7 @@ const router=useRouter()
                         </Button>
                     </div>
 
-                    <Card >
+                    <Card>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-xl font-medium">Recent Applications</CardTitle>
 
