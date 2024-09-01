@@ -8,6 +8,7 @@ import {signOut, useSession} from "next-auth/react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/redux/store";
+import {User2Icon} from "lucide-react";
 
 
 const IsLoggedIn = () => {
@@ -19,9 +20,7 @@ const IsLoggedIn = () => {
             {session?.data ? <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="rounded-full">
-                            <img className="w-8 h-8 rounded-full"
-                                 src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                                 alt="user photo"/>
+                            <User2Icon/>
                             <span className="sr-only">Toggle user menu</span>
                         </Button>
                     </DropdownMenuTrigger>
