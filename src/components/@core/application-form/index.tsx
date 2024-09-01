@@ -101,7 +101,7 @@ const ApplicationFormComponent: React.FC = () => {
 
     const [step, setStep] = React.useState<number>(1);
 const dispatch=useAppDispatch()
-    const application=useAppSelector(state => state.applicationState)
+    const application=useAppSelector((state:any) => state.applicationState)
     useEffect(() => {
         console.log('application stateeee--',application)
 
@@ -207,7 +207,7 @@ const dispatch=useAppDispatch()
 // Step components
 
 const Step1: React.FC<{ formik: any }> = ({ formik,setUploadedFrontFile,
-                                              setUploadedBackFile }) => (
+                                              setUploadedBackFile }:any) => (
     <div className="space-y-4">
         <div className="space-y-2">
             <Label htmlFor="name">Name of Applicant</Label>
