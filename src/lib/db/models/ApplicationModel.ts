@@ -68,7 +68,7 @@ const ApplicationSchema: Schema<IApplicationScheme|any> = new mongoose.Schema<IA
         },
         category: {
             type: String,
-            enum: ['General', 'OBC', 'STSC'],
+            enum: ['GEN', 'OBC', 'STSC'],
             required: [true, 'Category is required'],
         },
         email: {

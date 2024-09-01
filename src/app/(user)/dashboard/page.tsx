@@ -15,6 +15,9 @@ import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {setApplications} from "@/redux/features/user/userSlice";
 import Spinner from "@/molecules/spinner";
 import useSWR from "swr";
+import {ProgressIndicator} from "@radix-ui/react-progress";
+import CircularProgress from "@mui/material/CircularProgress";
+
 
 const Dashboard = () => {
     const dispatch = useAppDispatch()
@@ -22,10 +25,9 @@ const Dashboard = () => {
     const {user, refetchUserData} = useAuth()
     const router = useRouter()
     const [loading, setLoading] = useState(false)
-     const fetcher = (url:string )=> fetch(url).then(r => r.json())
+    const fetcher = (url: string) => fetch(url).then(r => r.json())
 
-    const { data, error, isLoading, mutate } = useSWR('/api/applications', fetcher);
-
+    const {data, error, isLoading, mutate} = useSWR('/api/applications', fetcher);
 
 
     // const fetchAllApplications = async () => {
@@ -60,32 +62,17 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        (async () => {
-            dispatch(setApplications(data))
-        })()
+        if (data) {
+            dispatch(setApplications((data as any).applications))
+        }
+
+
     }, [data]);
 
 
-        if(isLoading) {
-
-        return  <Spinner/>
-        }
-
     return (<div className="flex w-full flex-col container mx-auto">
-        {/*<Fab/>*/}
         <main className="grid flex-1 items-start gap-4  sm:px-6 sm:py-0 md:gap-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {/*<TaskCount/>*/}
-                {/*<Card>*/}
-                {/*    <CardHeader className="flex flex-row items-center justify-between pb-2">*/}
-                {/*        <CardTitle className="text-sm font-medium">Conversion Time</CardTitle>*/}
-                {/*        <BarChartIcon className="w-4 h-4 text-muted-foreground"/>*/}
-                {/*    </CardHeader>*/}
-                {/*    <CardContent>*/}
-                {/*        <div className="text-2xl font-bold">2hrs</div>*/}
-                {/*        /!*<p className="text-xs text-muted-foreground">+2% from last month</p>*!/*/}
-                {/*    </CardContent>*/}
-                {/*</Card>*/}
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 lg:grid-cols-1">
                 <div className={'flex w-full justify-end'}>
@@ -95,7 +82,6 @@ const Dashboard = () => {
                         size="sm"
                         className="px-3 py-2 max-w-min"
                         onClick={() => router.replace("/application")}
-                        // aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                         New Application
                     </Button>
@@ -107,8 +93,9 @@ const Dashboard = () => {
 
                     </CardHeader>
                     <CardContent>
-                        <ApplicationsTable applicationsData={applications} refetchApplications={mutate}/>
+                        {isLoading ? <CircularProgress/> :
 
+                            <ApplicationsTable applicationsData={applications} refetchApplications={mutate}/>}
                     </CardContent>
                 </Card>
 
@@ -117,45 +104,6 @@ const Dashboard = () => {
         </main>
     </div>)
 }
-
-function BarChartIcon(props: any) {
-    return (<svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-    >
-        <line x1="12" x2="12" y1="20" y2="10"/>
-        <line x1="18" x2="18" y1="20" y2="4"/>
-        <line x1="6" x2="6" y1="20" y2="16"/>
-    </svg>)
-}
-
-
-function DollarSignIcon(props: any) {
-    return (<svg
-        {...props}
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-    >
-        <line x1="12" x2="12" y1="2" y2="22"/>
-        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-    </svg>)
-}
-
 
 function UsersIcon(props: any) {
     return (<svg
