@@ -61,7 +61,7 @@ export const authOptions: NextAuthOptions = {
                 const {db, client} = await getDb()
                 console.log(' use1')
 
-                const user = await db.collection('users').findOne({email: credentials.email});
+                const user = await db.collection('users').findOne({email: credentials.email,role:'Volunteer'});
                 // const user = await (await db).collection('users').findUnique({
                 //     where: {email: credentials.email}
                 // }
