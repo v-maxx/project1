@@ -14,6 +14,7 @@ import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import FileUploader from "@/components/@core/file-uploader";
 import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // Components
 
@@ -277,8 +278,8 @@ const ApplicationFormComponent: React.FC<ApplicationFormProps> = ({applicationDa
                     </Button>)}
                 {step < 4 ? (<Button onClick={handleNext} className="ml-auto">
                         Next
-                    </Button>) : (<Button onClick={formik.submitForm} className="ml-auto">
-                        Submit
+                    </Button>) : (<Button disabled={loading} onClick={formik.submitForm} className="ml-auto">
+                    {loading &&  <CircularProgress size={20} color={'info'}/> } Submit
                     </Button>)}
             </CardFooter>
         </Card>);
