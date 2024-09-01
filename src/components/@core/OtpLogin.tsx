@@ -10,7 +10,7 @@ import {
     InputOTP,
     InputOTPGroup,
     InputOTPSeparator,
-    InputOTPSlot,
+    InputOTPSlot
 } from "@/components/ui/input-otp";
 import { Input } from "@/components/ui/input";
 
@@ -18,9 +18,12 @@ import { useRouter } from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {getApp, getApps, initializeApp} from "firebase/app";
 import {getAnalytics} from "firebase/analytics";
+import {Label} from "@/components/ui/label";
+import {toast} from "@/components/ui/use-toast";
 
 
-function OtpLogin() {
+
+function OtpLogin({formik}:any) {
     const firebaseConfig = {
         apiKey: "AIzaSyCiBNYzNw9l408GTkHcJbnMVQz76zJx9SU",
         authDomain: "application-manager-ba97d.firebaseapp.com",
@@ -34,6 +37,7 @@ function OtpLogin() {
 // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
+    const [verified, setVerified] = useState(false)
 
 // Initialize Firebase
 //      const app =getApps().length===0  ? initializeApp(firebaseConfig) :getApp();
@@ -100,7 +104,9 @@ function OtpLogin() {
 
             try {
                 await confirmationResult?.confirm(otp);
-                router.replace("/");
+                setVerified(true)
+                formik.setFieldValue('verification',true)
+                 // router.replace("/");
             } catch (error:any) {
                 console.log(error);
 
@@ -115,7 +121,7 @@ function OtpLogin() {
 
 
     const requestOtp = async (e?: FormEvent<HTMLFormElement>) => {
-        e?.preventDefault();
+        // e?.preventDefault();
 
         setResendCountdown(60);
 
@@ -123,18 +129,25 @@ function OtpLogin() {
             setError("");
 
             if (!recaptchaVerifier) {
-                return setError("RecaptchaVerifier is not initialized.");
+                return setError("Something Went Wrong!");
             }
 
             try {
                 const confirmationResult = await signInWithPhoneNumber(
                     auth,
-                    phoneNumber,
+                    formik.values.mobile,
                     recaptchaVerifier
                 );
 
                 setConfirmationResult(confirmationResult);
-                setSuccess("OTP sent successfully.");
+                toast({
+                    title: "OTP sent successfully.",
+                    description: "Check your provide Cantact Number ",
+                    // action: (
+                    //     <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
+                    // ),
+                })
+                // setSuccess("OTP sent successfully.");
             } catch (err: any) {
                 console.log(err);
                 setResendCountdown(0);
@@ -173,19 +186,37 @@ function OtpLogin() {
     );
 
     return (
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center w-full">
             {!confirmationResult && (
-                <form onSubmit={requestOtp}>
+
+                <div className="space-y-2 w-full">
+                    <Label htmlFor="mobile">Mobile</Label>
                     <Input
-                        className="text-black"
+                        id="mobile"
+                        name="mobile"
                         type="tel"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        value={formik.values.mobile}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                     />
-                    <p className="text-xs text-gray-400 mt-2">
-                        Please enter your number with the country code (i.e. +44 for UK)
-                    </p>
-                </form>
+
+                    {formik.touched.mobile && formik.errors.mobile ? (
+                        <div className="text-red-500 text-xs">{formik.errors.mobile}</div>
+                    ) : null}
+                </div>
+
+
+                // <form onSubmit={requestOtp}>
+                //     <Input
+                //         className="text-black"
+                //         type="tel"
+                //         value={phoneNumber}
+                //         onChange={(e) => setPhoneNumber(e.target.value)}
+                //     />
+                //     <p className="text-xs text-gray-400 mt-2">
+                //         Please enter your number with the country code (i.e. +44 for UK)
+                //     </p>
+                // </form>
             )}
 
             {confirmationResult && (
@@ -205,7 +236,7 @@ function OtpLogin() {
             )}
 
             <Button
-                disabled={!phoneNumber || isPending || resendCountdown > 0}
+                disabled={formik.errors.mobile || isPending || resendCountdown > 0}
                 onClick={() => requestOtp()}
                 className="mt-5"
             >

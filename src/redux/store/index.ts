@@ -5,7 +5,7 @@ import {userSlice} from "@/redux/features/user/userSlice";
 
 export const store = configureStore({
     reducer: {
-        users: userSlice.reducer,
+        user: userSlice.reducer,
     },
 })
 

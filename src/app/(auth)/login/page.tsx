@@ -69,9 +69,9 @@ const Login = () => {
     };
 
     return (
-        <section className="bg-white">
-            <form onSubmit={formik.handleSubmit} className="mt-8">
-                <Card className="w-full max-w-md mx-auto">
+        <section className="bg-white h-screen grid place-content-center w-full">
+            <form onSubmit={formik.handleSubmit} className="">
+                <Card className="w-full max-w-md mx-auto shadow-lg">
                     <CardHeader>
                         <CardTitle className="text-2xl font-bold">Login</CardTitle>
                         <CardDescription>Enter your credentials to access your account</CardDescription>

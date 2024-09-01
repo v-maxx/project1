@@ -27,18 +27,7 @@ const router=useRouter()
 
 
     return (<div className="flex w-full flex-col container mx-auto">
-        <Fab/>
-
-        <Button
-            type="button"
-            variant="default"
-            size="sm"
-            className="px-3 py-2 max-w-min"
-            onClick={()=>router.replace("/application")}
-            // aria-label={showPassword ? "Hide password" : "Show password"}
-        >
-            New Application
-        </Button>
+        {/*<Fab/>*/}
             <main className="grid flex-1 items-start gap-4  sm:px-6 sm:py-0 md:gap-8">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {/*<TaskCount/>*/}
@@ -54,6 +43,19 @@ const router=useRouter()
                     {/*</Card>*/}
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 lg:grid-cols-1">
+                    <div className={'flex w-full justify-end'}>
+                        <Button
+                            type="button"
+                            variant="default"
+                            size="sm"
+                            className="px-3 py-2 max-w-min"
+                            onClick={()=>router.replace("/application")}
+                            // aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            New Application
+                        </Button>
+                    </div>
+
                     <Card >
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-xl font-medium">Recent Applications</CardTitle>
