@@ -85,7 +85,7 @@ const ApplicationSchema: Schema<IApplicationScheme|any> = new mongoose.Schema<IA
         },
         backPhoto: {
             type: String,
-            required: [true, 'Back photo is required'],
+            required: [false, 'Back photo is required'],
         },
         photo: {
             type: String,

@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
             frontPhoto,
             backPhoto,
             photo,
+            status:'Pending Payment',
             initiatedBy: (token as any).user._id // Assuming token contains the userId; adjust as needed
         });
 

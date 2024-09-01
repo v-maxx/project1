@@ -34,6 +34,7 @@ interface FormData {
     frontPhoto: File | null;
     backPhoto: File | null;
     photo: File | null;
+    status:string
 
 }
 
@@ -54,6 +55,7 @@ const initialValues: FormData = {
     frontPhoto: null,
     backPhoto: null,
     photo: null,
+    status:'Pending'
 };
 
 // Define validation schemas for each step
