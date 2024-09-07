@@ -17,6 +17,7 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
+        fromYear={1970}
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{

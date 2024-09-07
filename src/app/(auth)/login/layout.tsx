@@ -14,16 +14,16 @@ export default function Layout({children}: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
-        <Providers>
-            <Suspense>
-                {/*<AuthProvider>*/}
+        // <Providers>
+        //     <Suspense>
+        //         <AuthProvider>
 
-                    {/*<Guard authGuard={false} guestGuard={true}>*/}
+                    // <Guard authGuard={false} guestGuard={true}>
                         <section> {children}</section>
-                    {/*</Guard>*/}
-                {/*</AuthProvider>*/}
-            </Suspense>
-        </Providers>
+                    // {/*</Guard>*/}
+                // </AuthProvider>
+        //     </Suspense>
+        // </Providers>
 
 
     )
