@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
             documentNumber,
             mobile,
             otp,
+            dob,
             verification,
             address,
             address1, // Added address1
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
             documentNumber,
             mobile,
             otp,
+            dob,
             verification,
             address,
             address1, // Included address1
