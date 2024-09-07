@@ -34,7 +34,7 @@ const ApplicationSchema: Schema<IApplicationScheme|any> = new mongoose.Schema<IA
             trim: true,
         },
         dob: {
-            type: Date,
+            type: String,
             required: [true, "DOB is required"],
             trim: true,
         },
