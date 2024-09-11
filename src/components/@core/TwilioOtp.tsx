@@ -179,7 +179,7 @@ export default function TwilioOtp({formik}: any) {
             </CardDescription>
         </CardHeader>
         <CardContent>
-            {!verified && step === 'send' && step !== 'verify' ? (<div className="space-y-4">
+            {!verified && step === 'send'  ? (<div className="space-y-4">
                 <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
                     <div className="flex">
@@ -208,7 +208,7 @@ export default function TwilioOtp({formik}: any) {
                 <Button className="w-full" onClick={handleSendOTP}
                         disabled={loading || formik.errors.mobile || !formik.values.mobile}>{loading ?
                     <CircularProgress size={20} color={'primary'}/> : 'Send OTP'}</Button>
-            </div>) : !verified && step !== 'send' && step === 'verify' ? (<div className="space-y-4">
+            </div>) : !verified &&  step === 'verify' ? (<div className="space-y-4">
                 <div className="space-y-2">
                     <Label htmlFor="otp">One-Time Password</Label>
                     <InputOTP

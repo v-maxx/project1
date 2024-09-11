@@ -10,7 +10,7 @@ export const sendApplicationId=async (applicationId:any,phone:any)=> {
             from: '+12085371924',
             to:   `+91${phone}`,
         })
-        .then(message => console.log(message.sid))
+        .then((message:any) => console.log(message.sid))
 
 
 }
