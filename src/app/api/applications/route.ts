@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
         await mongooseConnect();
 
         // Fetch all applications initiated by the user
-        const applications = await Application.find({ initiatedBy: (token as any).user._id });
+        const applications = await Application.find({ initiatedBy: (token as any).user._id }).sort({ updatedAt: -1 });
 
         // Respond with the applications
         return Response.json({ success: true, applications }, { status: 200 });

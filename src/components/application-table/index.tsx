@@ -7,6 +7,7 @@ import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger
 } from "@/components/ui/dialog";
 import Spinner from "@/molecules/spinner";
+import moment from "moment";
 
 // Sample data for the table
 
@@ -60,6 +61,16 @@ export default function ApplicationsTable({applicationsData,refetchApplications}
         setOpen(false)
         refetchApplications()
     }
+
+
+    const renderAddress=(address:any)=>{
+
+        let add= `${address.street ? address.street+", " : ''}${address.district ? address.district+", " : ''}${address.city? address.city+", " :''} ${address.state?address.state+', ' :''} ${address.pincode?address.pincode :''}`
+
+    return address ? add : null
+    }
+
+
     if (loading) {
 
         return <Spinner/>
@@ -101,6 +112,7 @@ export default function ApplicationsTable({applicationsData,refetchApplications}
                         <TableHead className={'min-w-max whitespace-nowrap'}>ID</TableHead>
                         <TableHead className={'min-w-max whitespace-nowrap'}>Name</TableHead>
                         <TableHead className={'min-w-max whitespace-nowrap'}>Father's Name</TableHead>
+                        <TableHead className={'min-w-max whitespace-nowrap'}>Date Of Birth</TableHead>
                         <TableHead className={'min-w-max whitespace-nowrap'}>Document Type</TableHead>
                         <TableHead className={'min-w-max whitespace-nowrap'}>Document Number</TableHead>
                         <TableHead className={'min-w-max whitespace-nowrap'}>Mobile</TableHead>
@@ -124,12 +136,13 @@ export default function ApplicationsTable({applicationsData,refetchApplications}
                             <TableCell>{application._id}</TableCell>
                             <TableCell>{application.name}</TableCell>
                             <TableCell>{application.fatherName}</TableCell>
+                            <TableCell>{moment(application.dob).format("DD-MM-YYYY")}</TableCell>
                             <TableCell>{application.documentType}</TableCell>
                             <TableCell>{application.documentNumber}</TableCell>
                             <TableCell>{application.mobile}</TableCell>
-                            <TableCell>{application.address}</TableCell>
-                            <TableCell>{application.address1}</TableCell>
-                            <TableCell>{application.residenceType}</TableCell>
+                            <TableCell className={'whitespace-nowrap min-w-max'}>{renderAddress(application.address)}</TableCell>
+                            <TableCell className={'whitespace-nowrap min-w-max'}>{renderAddress(application.address1)}</TableCell>
+                            <TableCell >{application.residenceType}</TableCell>
                             <TableCell>{application.occupation}</TableCell>
                             <TableCell>{application.category}</TableCell>
                             <TableCell>{application.email}</TableCell>

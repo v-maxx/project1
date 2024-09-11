@@ -1,7 +1,7 @@
 'use client'
 import React, {useContext, useEffect, useState} from 'react';
 
-import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card"
+import {Card, CardHeader, CardTitle, CardContent, CardFooter} from "@/components/ui/card"
 
 import {fetchLinks} from "@/lib/helpers/functions";
 import {useAuth} from "@/redux/store";
@@ -97,6 +97,9 @@ const Dashboard = () => {
 
                             <ApplicationsTable applicationsData={applications} refetchApplications={mutate}/>}
                     </CardContent>
+                    <CardFooter className={'flex justify-end'}>
+                        Total: {applications.length ?? 0}
+                    </CardFooter>
                 </Card>
 
 

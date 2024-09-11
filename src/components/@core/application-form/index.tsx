@@ -23,8 +23,10 @@ import {format} from "date-fns";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {LocalizationProvider} from "@mui/x-date-pickers";
+import { LocalizationProvider} from "@mui/x-date-pickers";
 import {days} from "effect/Duration";
+import dayjs, {Dayjs} from "dayjs";
+import TwilioOtp from "@/components/@core/TwilioOtp";
 // Components
 
 // Define the form data interface
@@ -59,7 +61,7 @@ const initialValues: FormData = {
     fatherName: '',
     documentType: '',
     documentNumber: '',
-    mobile: '+91',
+    mobile: '',
     verification: false,
     address: {
         street: "", district: "", city: "", state: "", pincode: "",
@@ -80,14 +82,20 @@ const initialValues: FormData = {
 
 // Define validation schemas for each step
 const validationSchemas = [Yup.object({
-    name: Yup.string().required('Name is required'),
-    fatherName: Yup.string().required('Father\'s Name is required'),
+    name: Yup.string()
+        .required('Name is required')
+        .matches(/^[A-Za-z\s]+$/, 'Name must not contain numbers or special characters'),
+
+    fatherName: Yup.string()
+        .required("Father's Name is required")
+        .matches(/^[A-Za-z\s]+$/, "Father's Name must not contain numbers or special characters"),
+
     dob: Yup.date().required('Date of Birth is required'),
     documentType: Yup.string().required('Document Type is required'), // documentNumber: Yup.string().required('Document Number is required'),
     documentNumber: Yup.string()
         .when('documentType', {
             is: 'aadhar', // If documentType is 'aadhar'
-            then: (schema) => schema.length(16, 'Enter a Valid Aadhar Number') // Ensuring length is 16
+            then: (schema) => schema.length(16, 'Enter Correct Aadhar Number') .matches(/^[1-9][0-9]*$/,'Enter a Valid Aadhar Number')// Ensuring length is 16
                 .required('Please enter Aadhar number'), // Required validation for aadhar
             otherwise: (schema) => schema.required('Document Number is required'), // Default required validation
         }),
@@ -100,8 +108,7 @@ const validationSchemas = [Yup.object({
         }),
 }), Yup.object({
     mobile: Yup.string()
-        .required('Mobile is required')
-        .matches(/^\+91[1-9]\d{9}$/, 'Mobile must start with +91 and followed by a valid Contact number'),
+        .matches(/^[1-9][0-9]{9}$/, 'Enter Valid Mobile Number').length(10,'Enter Valid Mobile Number').required('Mobile is required'),
 
     verification: Yup.boolean()
         .required('Not Verified, Please verify your contact number first')
@@ -254,12 +261,13 @@ const ApplicationFormComponent: React.FC<ApplicationFormProps> = ({applicationDa
         },
     });
 
-
+    const [dobValue, setDobValue] = useState('')
     useEffect(() => {
         console.log('applicationData stateeee--', applicationData)
         if (applicationData) {
             console.log('applicationData stateeee--', applicationData)
             formik.setValues(applicationData)
+            // setDobValue(applicationData.dob)
         }
     }, [applicationData])
 
@@ -359,6 +367,7 @@ const Step1: React.FC<{ formik: any }> = ({
             name="name"
             value={formik.values.name}
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
 
         />
         {formik.touched.name && formik.errors.name ? (
@@ -380,10 +389,12 @@ const Step1: React.FC<{ formik: any }> = ({
         <Label htmlFor="dob">Date of Birth</Label>
         <LocalizationProvider dateAdapter={AdapterDayjs as any}>
             <DemoContainer components={['DatePicker']}>
-                <DatePicker  onChange={(date:any)=>{
-                    console.log('picked date--',(date as Date).toISOString())
-                    formik.setFieldValue('dob', (date as Date).toISOString())
-                }} name={'dob'}    label="Basic date picker" />
+                <DatePicker
+                    value={formik.values.dob ? dayjs(formik.values.dob) : null} // Use dayjs to convert the value
+                    onChange={(date: any) => {
+                        console.log('picked date--', date);
+                        formik.setFieldValue('dob', date ? date.toISOString() : ''); // Set the date in ISO format
+                    }} name={'dob'}   />
             </DemoContainer>
         </LocalizationProvider>
 
@@ -419,6 +430,7 @@ const Step1: React.FC<{ formik: any }> = ({
                 name="documentNumber"
                 value={formik.values.documentNumber}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
 
             />
             {formik.touched.documentNumber && formik.errors.documentNumber ? (
@@ -471,11 +483,15 @@ const Step1: React.FC<{ formik: any }> = ({
 
 const Step2: React.FC<{ formik: any; }> = ({formik}) => (<div className="space-y-4">
     <div className="flex flex-col items-center">
-        <h1 className="font-bold text-xl text-center mb-5">
-            Mobile Verification
-        </h1>
-        <OtpLogin formik={formik}/>
+        {/*<h1 className="font-bold text-xl text-center mb-5">*/}
+        {/*    Mobile Verification*/}
+        {/*</h1>*/}
+        {/*<OtpLogin formik={formik}/>*/}
+        <TwilioOtp formik={formik}/>
     </div>
+
+
+
     {/*<div className="space-y-2">*/}
     {/*    <Label htmlFor="mobile">Mobile</Label>*/}
     {/*    <Input*/}

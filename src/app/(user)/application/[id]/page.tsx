@@ -36,7 +36,7 @@ const ApplicationSingle = ({ params }: { params: { id: string } }) => {
     }, []);
 
     return (
-        <div className={'p-16'}>
+        <div className={'p-4'}>
             <ApplicationFormComponent applicationData={applicationData} applicationId={params.id} type={'update'}/>
 
         </div>

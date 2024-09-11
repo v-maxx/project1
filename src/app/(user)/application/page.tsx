@@ -5,16 +5,8 @@ import FileUploader from "@/components/@core/file-uploader";
 
 const Application = () => {
 
-
-
-
-
-
-
-
-
     return (
-        <div className={'p-16'}>
+        <div className={'p-4'}>
             <ApplicationFormComponent/>
 
         </div>

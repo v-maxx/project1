@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import mongooseConnect from "@/lib/db/mongoose";
 import Application from "@/lib/db/models/ApplicationModel";
+import {sendApplicationId} from "@/lib/twilio/helpers";
 
 export async function POST(req: NextRequest) {
     try {
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
 
         // Save the document to the database
         const result = await newApplication.save();
-
+        await sendApplicationId(result._id,mobile)
         // Respond with success message
         return Response.json({ success: true, message: 'Application Created successfully', application: result }, { status: 200 });
     } catch (error: any) {
