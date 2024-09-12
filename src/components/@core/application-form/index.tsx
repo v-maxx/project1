@@ -27,6 +27,7 @@ import { LocalizationProvider} from "@mui/x-date-pickers";
 import {days} from "effect/Duration";
 import dayjs, {Dayjs} from "dayjs";
 import TwilioOtp from "@/components/@core/TwilioOtp";
+import DateOfBirthInput from "@/components/@core/DateOfBirthInput";
 // Components
 
 // Define the form data interface
@@ -51,7 +52,8 @@ interface FormData {
     backPhoto: File | null;
     photo: File | null;
     status: string;
-    dob: string
+    dob: string;
+    age:string;
 
 }
 
@@ -77,7 +79,8 @@ const initialValues: FormData = {
     backPhoto: null,
     photo: null,
     status: 'Pending',
-    dob: ''
+    dob: '',
+    age:''
 };
 
 // Define validation schemas for each step
@@ -91,6 +94,7 @@ const validationSchemas = [Yup.object({
         .matches(/^[A-Za-z\s]+$/, "Father's Name must not contain numbers or special characters"),
 
     dob: Yup.date().required('Date of Birth is required'),
+    age: Yup.string().required('Age is required'),
     documentType: Yup.string().required('Document Type is required'), // documentNumber: Yup.string().required('Document Number is required'),
     documentNumber: Yup.string()
         .when('documentType', {
@@ -390,16 +394,52 @@ const Step1: React.FC<{ formik: any }> = ({
         <LocalizationProvider dateAdapter={AdapterDayjs as any}>
             <DemoContainer components={['DatePicker']}>
                 <DatePicker
+                    format={'DD/MM/YYYY'}
                     value={formik.values.dob ? dayjs(formik.values.dob) : null} // Use dayjs to convert the value
                     onChange={(date: any) => {
-                        console.log('picked date--', date);
+                        let selectedDate = dayjs(date);
+                        const today = dayjs();
+
+                        let years = today.diff(selectedDate, 'year');
+                        selectedDate = selectedDate.add(years, 'year');
+
+                        let months = today.diff(selectedDate, 'month');
+
+                        // Adjust for accurate months
+                        const totalMonths = today.diff(dayjs(date), 'month');
+                        years = Math.floor(totalMonths / 12);
+                        months = totalMonths % 12;
+
+                        // Log the age
+                        console.log(`Age: ${years} years and ${months} months`);
+
+                        // Optionally, you can store the age as a string or an object
+                        formik.setFieldValue('age', `${years} years and ${months} months`);
                         formik.setFieldValue('dob', date ? date.toISOString() : ''); // Set the date in ISO format
+
                     }} name={'dob'}   />
             </DemoContainer>
         </LocalizationProvider>
 
         {formik.touched.dob && formik.errors.dob ? (
             <div className="text-red-500 text-xs">{formik.errors.dob}</div>) : null}
+    </div>
+
+    <div className="space-y-2">
+        <Label htmlFor="age">
+           Age
+        </Label>
+        <Input
+            disabled
+            id="age"
+            name="age"
+            type={'text'}
+            value={formik.values.age}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+        />
+        {formik.touched.age && formik.errors.age ? (
+            <div className="text-red-500 text-xs">{formik.errors.age}</div>) : null}
     </div>
 
     <div className="space-y-2">

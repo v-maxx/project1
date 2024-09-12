@@ -98,7 +98,7 @@ const Dashboard = () => {
                             <ApplicationsTable applicationsData={applications} refetchApplications={mutate}/>}
                     </CardContent>
                     <CardFooter className={'flex justify-end'}>
-                        Total: {applications.length ?? 0}
+                        Total: {applications?.length ?? 0}
                     </CardFooter>
                 </Card>
 

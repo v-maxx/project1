@@ -38,6 +38,11 @@ const ApplicationSchema: Schema<IApplicationScheme|any> = new mongoose.Schema<IA
             required: [true, "DOB is required"],
             trim: true,
         },
+        age: {
+            type: String,
+            required: [true, "Age is required"],
+            trim: true,
+        },
         documentType: {
             type: String,
             required: [true, 'Document type is required'],
