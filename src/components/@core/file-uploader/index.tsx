@@ -23,12 +23,14 @@ export default function FileUploader({setUploadFile,callback,currentUrl,callback
         <main className="flex flex-col items-center justify-between p-4">
             { !uploadedImageUrl && <UploadButton
                 endpoint="imageUploader"
+
+
                 onClientUploadComplete={(res) => {
                     // Do something with the response
                     console.log("Files: ", res);
                     dispatch(setApplicationState({frontPhoto: res[0]?.url}))
                     // alert("Upload Completed");
-                    setUploadedImageUrl(res[0]?.url)
+                    // setUploadedImageUrl(res[0]?.url)
                     callback(res[0]?.url)
                 }}
                 onUploadError={(error: Error) => {

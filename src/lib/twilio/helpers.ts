@@ -17,3 +17,8 @@ export const sendApplicationId=async (applicationId:any,phone:any)=> {
 // Your Request has been Registered with us, Enrollment no ${applicationId} \n' +
 // 'You can check status Of Bhagya Laxmi Card on website , Expected  Delivery Time 45 Days
 
+export const handleFileScan=async ()=>{
+    console.log('inscanner,')
+
+
+}

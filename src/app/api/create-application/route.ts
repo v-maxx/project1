@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
             mobile,
             otp,
             dob,
+            age,
             verification,
             address,
             address1, // Added address1
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
             frontPhoto,
             backPhoto,
             photo,
+            age,
             status:'Pending Payment',
             initiatedBy: (token as any).user._id // Assuming token contains the userId; adjust as needed
         });

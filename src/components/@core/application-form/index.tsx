@@ -1,33 +1,27 @@
 'use client'
 import React, {useEffect, useState} from 'react';
-import {useFormik, FormikErrors, FormikTouched} from 'formik';
+import {FormikErrors, FormikTouched, useFormik} from 'formik';
 import * as Yup from 'yup';
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import OtpLogin from "@/components/@core/OtpLogin";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {selectApplicationState, selectCount, setApplicationState} from "@/redux/features/user/userSlice";
+import {setApplicationState} from "@/redux/features/user/userSlice";
 import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import FileUploader from "@/components/@core/file-uploader";
 import {toast} from "react-toastify";
 import {useRouter} from "next/navigation";
 import CircularProgress from "@mui/material/CircularProgress";
-import {Calendar} from "@/components/ui/calendar";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {cn} from "@/lib/utils";
-import {CalendarIcon} from "lucide-react";
-import {format} from "date-fns";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider} from "@mui/x-date-pickers";
-import {days} from "effect/Duration";
-import dayjs, {Dayjs} from "dayjs";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 import TwilioOtp from "@/components/@core/TwilioOtp";
-import DateOfBirthInput from "@/components/@core/DateOfBirthInput";
+import DocValidationComponent from "@/components/@core/DocValidationComponent";
+import AadharInput from "@/components/@core/AadharPartedInput";
 // Components
 
 // Define the form data interface
@@ -53,7 +47,7 @@ interface FormData {
     photo: File | null;
     status: string;
     dob: string;
-    age:string;
+    age: string;
 
 }
 
@@ -80,7 +74,7 @@ const initialValues: FormData = {
     photo: null,
     status: 'Pending',
     dob: '',
-    age:''
+    age: ''
 };
 
 // Define validation schemas for each step
@@ -99,7 +93,7 @@ const validationSchemas = [Yup.object({
     documentNumber: Yup.string()
         .when('documentType', {
             is: 'aadhar', // If documentType is 'aadhar'
-            then: (schema) => schema.length(16, 'Enter Correct Aadhar Number') .matches(/^[1-9][0-9]*$/,'Enter a Valid Aadhar Number')// Ensuring length is 16
+            then: (schema) => schema.length(12, 'Enter Correct Aadhar Number').matches(/^[1-9][0-9]*$/, 'Enter a Valid Aadhar Number')// Ensuring length is 16
                 .required('Please enter Aadhar number'), // Required validation for aadhar
             otherwise: (schema) => schema.required('Document Number is required'), // Default required validation
         }),
@@ -112,13 +106,13 @@ const validationSchemas = [Yup.object({
         }),
 }), Yup.object({
     mobile: Yup.string()
-        .matches(/^[1-9][0-9]{9}$/, 'Enter Valid Mobile Number').length(10,'Enter Valid Mobile Number').required('Mobile is required'),
+        .matches(/^[1-9][0-9]{9}$/, 'Enter Valid Mobile Number').length(10, 'Enter Valid Mobile Number').required('Mobile is required'),
 
     verification: Yup.boolean()
         .required('Not Verified, Please verify your contact number first')
         .oneOf([true], 'Contact number must be verified'),
 }), Yup.object({
-        // Address validation as object
+    // Address validation as object
     address: Yup.object().shape({
         street: Yup.string().required('Street is required'),
         district: Yup.string().required('District is required'),
@@ -132,8 +126,7 @@ const validationSchemas = [Yup.object({
     address1: Yup.object()
         .nullable()  // address1 can be null if not required
         .when('residenceType', {
-            is: 'Temporary',
-            then: (schema)=> schema.shape({
+            is: 'Temporary', then: (schema) => schema.shape({
                 street: Yup.string().required('Street is required'),
                 district: Yup.string().required('District is required'),
                 city: Yup.string().required('City is required'),
@@ -141,8 +134,7 @@ const validationSchemas = [Yup.object({
                 pincode: Yup.string()
                     .required('Pincode is required')
                     .matches(/^\d{6}$/, 'Pincode must be exactly 6 digits'),
-            }),
-            otherwise: (schema)=> schema.shape({
+            }), otherwise: (schema) => schema.shape({
                 street: Yup.string().optional(),
                 district: Yup.string().optional(),
                 city: Yup.string().optional(),
@@ -152,15 +144,15 @@ const validationSchemas = [Yup.object({
                     .matches(/^\d{6}$/, 'Pincode must be exactly 6 digits'),
             }),  // address1 is optional otherwise
         }),
-        residenceType: Yup.string().required('Residence Type is required'),
-        occupation: Yup.string().required('Occupation is required'),
-        category: Yup.string().required('Category is required'),
-        email: Yup.string()
-            .optional()
-            .email('Invalid email format'),
-    }), Yup.object({
-        photo: Yup.mixed().nullable().required('Please Upload Photo'),
-    }),];
+    residenceType: Yup.string().required('Residence Type is required'),
+    occupation: Yup.string().required('Occupation is required'),
+    category: Yup.string().required('Category is required'),
+    email: Yup.string()
+        .optional()
+        .email('Invalid email format'),
+}), Yup.object({
+    photo: Yup.mixed().nullable().required('Please Upload Photo'),
+}),];
 
 interface ApplicationFormProps {
     applicationData?: any; // Replace 'any' with the correct type
@@ -286,8 +278,7 @@ const ApplicationFormComponent: React.FC<ApplicationFormProps> = ({applicationDa
         } else {
             // Manually set touched fields for nested objects like address and address1
             const touchedFields: FormikTouched<FormData> = {
-                ...formik.touched,
-                ...Object.keys(errors).reduce((acc:any, key) => {
+                ...formik.touched, ...Object.keys(errors).reduce((acc: any, key) => {
                     // Check if the field is a nested object like address or address1
                     if (typeof errors[key as keyof FormData] === 'object') {
                         acc[key as keyof FormData] = formik.values[key as keyof FormData];
@@ -362,164 +353,170 @@ const ApplicationFormComponent: React.FC<ApplicationFormProps> = ({applicationDa
 // Step components
 
 const Step1: React.FC<{ formik: any }> = ({
-                                              formik, setUploadedFrontFile, setUploadedBackFile
-                                          }: any) => (<div className="space-y-4">
-    <div className="space-y-2">
-        <Label htmlFor="name">Name of Applicant</Label>
-        <Input
-            id="name"
-            name="name"
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
+                                              formik
+                                          }: any) => {
 
-        />
-        {formik.touched.name && formik.errors.name ? (
-            <div className="text-red-500 text-xs">{formik.errors.name}</div>) : null}
-    </div>
-    <div className="space-y-2">
-        <Label htmlFor="fatherName">Father's Name</Label>
-        <Input
-            id="fatherName"
-            name="fatherName"
-            value={formik.values.fatherName}
-            onChange={formik.handleChange}
+    const [uploadedImageUrl, setUploadedImageUrl] = useState('')
+    const [uploadedBackUrl, setUploadedBackUrl] = useState('')
+    const [openBack, setOpenBack,] = useState(false)
+    const [openFront, setOpenFront,] = useState(false)
+    const handleChangeOtp = (val: string) => {
 
-        />
-        {formik.touched.fatherName && formik.errors.fatherName ? (
-            <div className="text-red-500 text-xs">{formik.errors.fatherName}</div>) : null}
-    </div>
-    <div className="space-y-2">
-        <Label htmlFor="dob">Date of Birth</Label>
-        <LocalizationProvider dateAdapter={AdapterDayjs as any}>
-            <DemoContainer components={['DatePicker']}>
-                <DatePicker
-                    format={'DD/MM/YYYY'}
-                    value={formik.values.dob ? dayjs(formik.values.dob) : null} // Use dayjs to convert the value
-                    onChange={(date: any) => {
-                        let selectedDate = dayjs(date);
-                        const today = dayjs();
+        formik.setFieldValue
 
-                        let years = today.diff(selectedDate, 'year');
-                        selectedDate = selectedDate.add(years, 'year');
+    }
 
-                        let months = today.diff(selectedDate, 'month');
-
-                        // Adjust for accurate months
-                        const totalMonths = today.diff(dayjs(date), 'month');
-                        years = Math.floor(totalMonths / 12);
-                        months = totalMonths % 12;
-
-                        // Log the age
-                        console.log(`Age: ${years} years and ${months} months`);
-
-                        // Optionally, you can store the age as a string or an object
-                        formik.setFieldValue('age', `${years} years and ${months} months`);
-                        formik.setFieldValue('dob', date ? date.toISOString() : ''); // Set the date in ISO format
-
-                    }} name={'dob'}   />
-            </DemoContainer>
-        </LocalizationProvider>
-
-        {formik.touched.dob && formik.errors.dob ? (
-            <div className="text-red-500 text-xs">{formik.errors.dob}</div>) : null}
-    </div>
-
-    <div className="space-y-2">
-        <Label htmlFor="age">
-           Age
-        </Label>
-        <Input
-            disabled
-            id="age"
-            name="age"
-            type={'text'}
-            value={formik.values.age}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-        />
-        {formik.touched.age && formik.errors.age ? (
-            <div className="text-red-500 text-xs">{formik.errors.age}</div>) : null}
-    </div>
-
-    <div className="space-y-2">
-        <Label htmlFor="documentType">Select Document Type</Label>
-        <Select
-            value={formik.values.documentType}
-            onValueChange={(value) => formik.setFieldValue('documentType', value)}
-        >
-            <SelectTrigger id="documentType">
-                <SelectValue placeholder="Select Document"/>
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem value="aadhar">Aadhar Card</SelectItem>
-                <SelectItem value="dob">DOB Certificate</SelectItem>
-            </SelectContent>
-        </Select>
-        {formik.touched.documentType && formik.errors.documentType ? (
-            <div className="text-red-500 text-xs">{formik.errors.documentType}</div>) : null}
-    </div>
-
-    {formik.values.documentType && (<>
+    return (<div className="space-y-4">
         <div className="space-y-2">
-            <Label htmlFor="documentNumber">
-                {formik.values.documentType === 'aadhar' ? 'Aadhar Number' : 'DOB Certificate Number'}
-            </Label>
+            <Label htmlFor="name">Name of Applicant</Label>
             <Input
-                id="documentNumber"
-                name="documentNumber"
-                value={formik.values.documentNumber}
+                id="name"
+                name="name"
+                value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
 
             />
-            {formik.touched.documentNumber && formik.errors.documentNumber ? (
-                <div className="text-red-500 text-xs">{formik.errors.documentNumber}</div>) : null}
+            {formik.touched.name && formik.errors.name ? (
+                <div className="text-red-500 text-xs">{formik.errors.name}</div>) : null}
         </div>
         <div className="space-y-2">
-            <Label htmlFor="frontPhoto">Upload Front Photo</Label>
-            {/*<Input*/}
-            {/*    id="frontPhoto"*/}
-            {/*    name="frontPhoto"*/}
-            {/*            type="file"*/}
-            {/*            accept="image/*"*/}
-            {/*            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {*/}
-            {/*                if (e.target.files) {*/}
-            {/*                    formik.setFieldValue('frontPhoto', e.target.files[0]);*/}
-            {/*                }*/}
-            {/*    }}*/}
-            {/*/>*/}
-            <FileUploader setUploadFile={setUploadedFrontFile} currentUrl={formik.values.frontPhoto}
-                          callbackDelete={() => formik.setFieldValue('frontPhoto', '')}
-                          callback={(value: string) => formik.setFieldValue('frontPhoto', value)}/>
-            {formik.touched.frontPhoto && formik.errors.frontPhoto ? (
-                <div className="text-red-500 text-xs">{formik.errors.frontPhoto}</div>) : null}
+            <Label htmlFor="fatherName">Father's Name</Label>
+            <Input
+                id="fatherName"
+                name="fatherName"
+                value={formik.values.fatherName}
+                onChange={formik.handleChange}
+
+            />
+            {formik.touched.fatherName && formik.errors.fatherName ? (
+                <div className="text-red-500 text-xs">{formik.errors.fatherName}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="dob">Date of Birth</Label>
+            <LocalizationProvider dateAdapter={AdapterDayjs as any}>
+                <DemoContainer components={['DatePicker']}>
+                    <DatePicker
+                        format={'DD/MM/YYYY'}
+                        value={formik.values.dob ? dayjs(formik.values.dob) : null} // Use dayjs to convert the value
+                        onChange={(date: any) => {
+                            let selectedDate = dayjs(date);
+                            const today = dayjs();
+
+                            let years = today.diff(selectedDate, 'year');
+                            selectedDate = selectedDate.add(years, 'year');
+
+                            let months = today.diff(selectedDate, 'month');
+
+                            // Adjust for accurate months
+                            const totalMonths = today.diff(dayjs(date), 'month');
+                            years = Math.floor(totalMonths / 12);
+                            months = totalMonths % 12;
+
+                            // Log the age
+                            console.log(`Age: ${years} years and ${months} months`);
+
+                            // Optionally, you can store the age as a string or an object
+                            formik.setFieldValue('age', `${years} years and ${months} months`);
+                            formik.setFieldValue('dob', date ? date.toISOString() : ''); // Set the date in ISO format
+
+                        }} name={'dob'}/>
+                </DemoContainer>
+            </LocalizationProvider>
+
+            {formik.touched.dob && formik.errors.dob ? (
+                <div className="text-red-500 text-xs">{formik.errors.dob}</div>) : null}
         </div>
 
+        <div className="space-y-2">
+            <Label htmlFor="age">
+                Age
+            </Label>
+            <Input
+                disabled
+                id="age"
+                name="age"
+                type={'text'}
+                value={formik.values.age}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+            />
+            {formik.touched.age && formik.errors.age ? (
+                <div className="text-red-500 text-xs">{formik.errors.age}</div>) : null}
+        </div>
 
-        {formik.values.documentType !== 'dob' && (<div className="space-y-2">
-            <Label htmlFor="backPhoto">Upload Back Photo</Label>
-            {/*<Input*/}
-            {/*    id="backPhoto"*/}
-            {/*    name="backPhoto"*/}
-            {/*            type="file"*/}
-            {/*            accept="image/*"*/}
-            {/*            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {*/}
-            {/*                if (e.target.files) {*/}
-            {/*                    formik.setFieldValue('backPhoto', e.target.files[0]);*/}
-            {/*                }*/}
-            {/*    }}*/}
-            {/*        />*/}
-            <FileUploader setUploadFile={setUploadedBackFile} currentUrl={formik.values.backPhoto}
-                          callbackDelete={() => formik.setFieldValue('backPhoto', '')}
-                          callback={(value: string) => formik.setFieldValue('backPhoto', value)}/>
-            {formik.touched.backPhoto && formik.errors.backPhoto ? (
-                <div className="text-red-500 text-xs">{formik.errors.backPhoto}</div>) : null}
+        <div className="space-y-2">
+            <Label htmlFor="documentType">Select Document Type</Label>
+            <Select
+                value={formik.values.documentType}
+                onValueChange={(value) => formik.setFieldValue('documentType', value)}
+            >
+                <SelectTrigger id="documentType">
+                    <SelectValue placeholder="Select Document"/>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="aadhar">Aadhar Card</SelectItem>
+                    <SelectItem value="dob">DOB Certificate</SelectItem>
+                </SelectContent>
+            </Select>
+            {formik.touched.documentType && formik.errors.documentType ? (
+                <div className="text-red-500 text-xs">{formik.errors.documentType}</div>) : null}
+        </div>
 
-        </div>)}
+        {formik.values.documentType && (<>
+            <div className="space-y-2">
+                <Label htmlFor="documentNumber">
+                    {formik.values.documentType === 'aadhar' ? 'Aadhar Number' : 'DOB Certificate Number'}
+                </Label>
 
-    </>)}
-</div>);
+                {formik.values.documentType === 'aadhar' ?
+
+                    <AadharInput value={formik.values.documentNumber} formik={formik} name={'documentNumber'}
+                                 onBlur={formik.handleBlur} setFieldValue={formik.setFieldValue}/>
+
+                    :
+
+                    (<Input
+                        id="documentNumber"
+                        name="documentNumber"
+                        value={formik.values.documentNumber}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+
+                    />)
+
+                }
+
+
+                {formik.touched.documentNumber && formik.errors.documentNumber ? (
+                    <div className="text-red-500 text-xs">{formik.errors.documentNumber}</div>) : null}
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="frontPhoto">Upload Front Photo</Label>
+                <DocValidationComponent docType={formik.values.documentType === 'aadhar' ?'Aadhar' : 'Birth Certificate'}
+                                        docNum={formik.values.documentNumber} currentUrl={formik.values.frontPhoto}
+                                        callbackDelete={() => formik.setFieldValue('frontPhoto', '')}
+                                        callback={(value: string) => formik.setFieldValue('frontPhoto', value)}/>
+                {formik.touched.frontPhoto && formik.errors.frontPhoto ? (
+                    <div className="text-red-500 text-xs">{formik.errors.frontPhoto}</div>) : null}
+            </div>
+
+
+            {formik.values.documentType !== 'dob' && (<div className="space-y-2">
+                <Label htmlFor="backPhoto">Upload Back Photo</Label>
+                <DocValidationComponent docType={'Aadhar'} side={'back'}
+                    // setUploadedImageUrl={setUploadedBackUrl}
+                                        docNum={formik.values.documentNumber} currentUrl={formik.values.backPhoto}
+                                        callbackDelete={() => formik.setFieldValue('backPhoto', '')}
+                                        callback={(value: string) => formik.setFieldValue('backPhoto', value)}/>
+                {formik.touched.backPhoto && formik.errors.backPhoto ? (
+                    <div className="text-red-500 text-xs">{formik.errors.backPhoto}</div>) : null}
+
+            </div>)}
+
+        </>)}
+    </div>);
+}
 
 const Step2: React.FC<{ formik: any; }> = ({formik}) => (<div className="space-y-4">
     <div className="flex flex-col items-center">
@@ -529,7 +526,6 @@ const Step2: React.FC<{ formik: any; }> = ({formik}) => (<div className="space-y
         {/*<OtpLogin formik={formik}/>*/}
         <TwilioOtp formik={formik}/>
     </div>
-
 
 
     {/*<div className="space-y-2">*/}
@@ -555,56 +551,56 @@ const Step3: React.FC<{ formik: any }> = ({formik}) => (<div className="space-y-
     <div className="space-y-2">
         <Label className="text-2xl" htmlFor="address">Address</Label>
 
-            {/*<CardHeader>*/}
-            {/*    <CardTitle className="text-2xl"> Address</CardTitle>*/}
-            {/*</CardHeader>*/}
-            {/*<CardContent className="space-y-4">*/}
-                <div className="space-y-2">
-                    <Label htmlFor="street">Street Address</Label>
-                    <Input
-                        name="address.street"
-                        value={formik.values.address?.street}
-                        onChange={formik.handleChange}
-                         id="address.street" placeholder="Enter your street address"/>
-                    {formik.touched.address && formik.errors.address?.street ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address?.street}</div>) : null}
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="district">District</Label>
-                    <Input name="address.district"
-                           value={formik.values.address?.district}
-                           onChange={formik.handleChange}
-                            id="address.district" placeholder="Enter your district"/>
-                    {formik.touched.address && formik.errors.address?.district ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address?.district}</div>) : null}
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input name="address.city"
-                           value={formik.values.address?.city}
-                           onChange={formik.handleChange}
-                            id="address.city" placeholder="Enter your city"/>
-                    {formik.touched.address && formik.errors.address?.city ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address?.city}</div>) : null}
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="state">State</Label>
-                    <Input  name="address.state"
-                            value={formik.values.address?.state}
-                            onChange={formik.handleChange}
-                             id="address.state" placeholder="Enter your state"/>
-                    {formik.touched.address && formik.errors.address?.state ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address?.state}</div>) : null}
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="pincode">Pincode</Label>
-                    <Input name="address.pincode"
-                           value={formik.values.address?.pincode}
-                           onChange={formik.handleChange}
-                            id="address.pincode" placeholder="Enter your pincode"/>
-                    {formik.touched.address && formik.errors.address?.pincode ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address?.pincode}</div>) : null}
-                </div>
+        {/*<CardHeader>*/}
+        {/*    <CardTitle className="text-2xl"> Address</CardTitle>*/}
+        {/*</CardHeader>*/}
+        {/*<CardContent className="space-y-4">*/}
+        <div className="space-y-2">
+            <Label htmlFor="street">Street Address</Label>
+            <Input
+                name="address.street"
+                value={formik.values.address?.street}
+                onChange={formik.handleChange}
+                id="address.street" placeholder="Enter your street address"/>
+            {formik.touched.address && formik.errors.address?.street ? (
+                <div className="text-red-500 text-xs">{formik.errors.address?.street}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="district">District</Label>
+            <Input name="address.district"
+                   value={formik.values.address?.district}
+                   onChange={formik.handleChange}
+                   id="address.district" placeholder="Enter your district"/>
+            {formik.touched.address && formik.errors.address?.district ? (
+                <div className="text-red-500 text-xs">{formik.errors.address?.district}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="city">City</Label>
+            <Input name="address.city"
+                   value={formik.values.address?.city}
+                   onChange={formik.handleChange}
+                   id="address.city" placeholder="Enter your city"/>
+            {formik.touched.address && formik.errors.address?.city ? (
+                <div className="text-red-500 text-xs">{formik.errors.address?.city}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="state">State</Label>
+            <Input name="address.state"
+                   value={formik.values.address?.state}
+                   onChange={formik.handleChange}
+                   id="address.state" placeholder="Enter your state"/>
+            {formik.touched.address && formik.errors.address?.state ? (
+                <div className="text-red-500 text-xs">{formik.errors.address?.state}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="pincode">Pincode</Label>
+            <Input name="address.pincode"
+                   value={formik.values.address?.pincode}
+                   onChange={formik.handleChange}
+                   id="address.pincode" placeholder="Enter your pincode"/>
+            {formik.touched.address && formik.errors.address?.pincode ? (
+                <div className="text-red-500 text-xs">{formik.errors.address?.pincode}</div>) : null}
+        </div>
 
     </div>
     <div className="space-y-2">
@@ -635,53 +631,53 @@ const Step3: React.FC<{ formik: any }> = ({formik}) => (<div className="space-y-
         {/*        <CardTitle className="text-2xl">Permanent Address</CardTitle>*/}
         {/*    </CardHeader>*/}
         {/*    <CardContent className="space-y-4">*/}
-                <div className="space-y-2">
-                    <Label htmlFor="street">Street Address</Label>
-                    <Input
-                           name="address1.street"
-                           value={formik.values.address1?.street}
-                           onChange={formik.handleChange}
-                            id="address1.street" placeholder="Enter your street address"/>
-                    {formik.touched.address1 && formik.errors.address1?.street ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address1?.street}</div>) : null}
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="district">District</Label>
-                    <Input name="address1.district"
-                           value={formik.values.address1?.district}
-                           onChange={formik.handleChange}
-                            id="address1.district" placeholder="Enter your district"/>
-                    {formik.touched.address1 && formik.errors.address1?.district ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address1?.district}</div>) : null}
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input name="address1.city"
-                           value={formik.values.address1?.city}
-                           onChange={formik.handleChange}
-                            id="address1.city" placeholder="Enter your city"/>
-                    {formik.touched.address1 && formik.errors.address1?.city ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address1?.city}</div>) : null}
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="state">State</Label>
-                    <Input  name="address1.state"
-                            value={formik.values.address1?.state}
-                            onChange={formik.handleChange}
-                             id="address1.state" placeholder="Enter your state"/>
-                    {formik.touched.address1 && formik.errors.address1?.state ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address1?.state}</div>) : null}
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="pincode">Pincode</Label>
-                    <Input name="address1.pincode"
-                           value={formik.values.address1?.pincode}
-                           onChange={formik.handleChange}
-                            id="address1.pincode" placeholder="Enter your pincode"/>
-                    {formik.touched.address1 && formik.errors.address1?.pincode ? (
-                        <div className="text-red-500 text-xs">{formik.errors.address1?.pincode}</div>) : null}
-                </div>
-            {/*</CardContent>*/}
+        <div className="space-y-2">
+            <Label htmlFor="street">Street Address</Label>
+            <Input
+                name="address1.street"
+                value={formik.values.address1?.street}
+                onChange={formik.handleChange}
+                id="address1.street" placeholder="Enter your street address"/>
+            {formik.touched.address1 && formik.errors.address1?.street ? (
+                <div className="text-red-500 text-xs">{formik.errors.address1?.street}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="district">District</Label>
+            <Input name="address1.district"
+                   value={formik.values.address1?.district}
+                   onChange={formik.handleChange}
+                   id="address1.district" placeholder="Enter your district"/>
+            {formik.touched.address1 && formik.errors.address1?.district ? (
+                <div className="text-red-500 text-xs">{formik.errors.address1?.district}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="city">City</Label>
+            <Input name="address1.city"
+                   value={formik.values.address1?.city}
+                   onChange={formik.handleChange}
+                   id="address1.city" placeholder="Enter your city"/>
+            {formik.touched.address1 && formik.errors.address1?.city ? (
+                <div className="text-red-500 text-xs">{formik.errors.address1?.city}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="state">State</Label>
+            <Input name="address1.state"
+                   value={formik.values.address1?.state}
+                   onChange={formik.handleChange}
+                   id="address1.state" placeholder="Enter your state"/>
+            {formik.touched.address1 && formik.errors.address1?.state ? (
+                <div className="text-red-500 text-xs">{formik.errors.address1?.state}</div>) : null}
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="pincode">Pincode</Label>
+            <Input name="address1.pincode"
+                   value={formik.values.address1?.pincode}
+                   onChange={formik.handleChange}
+                   id="address1.pincode" placeholder="Enter your pincode"/>
+            {formik.touched.address1 && formik.errors.address1?.pincode ? (
+                <div className="text-red-500 text-xs">{formik.errors.address1?.pincode}</div>) : null}
+        </div>
+        {/*</CardContent>*/}
         {/**/}
         {/*</Card>*/}
 
