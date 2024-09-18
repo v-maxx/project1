@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const Page = () => {
     return (
-        <div className={'container py-10 grid grid-cols-2 place-content-center place-items-center h-[100%] gap-10'}>
+        <div className={'container py-10 grid grid-cols-1 md:grid-cols-2 place-content-center place-items-center h-[100%] gap-10'}>
 
             <div className={'flex flex-col gap-4'}>
                 <Image src={'/yojna.png'} alt={'bhagyalaxmi-yojna'} width={1200} height={500}/>

@@ -25,8 +25,6 @@ const NavBar = () => {
                 <Button  className={`${pathname===('/') ? 'bg-blue-600 text-white hover:bg-blue-500' :''}`}   variant="ghost">Home</Button>
             </Link>
             {session.data &&
-
-
                 <div className="grid p-2">
                     {/*<NavigationMenuLink asChild>*/}
                         <Link
@@ -67,14 +65,14 @@ const NavBar = () => {
 //             </NavigationMenuItem>
 // </NavigationMenu>
             }
-            {!session.data?.user && <Link href={'/feedback'}>
+            <Link href={'/feedback'}>
                 <Button className={`${pathname.includes('/feedback') ? 'bg-blue-600 text-white hover:bg-blue-500' : ''}  `}
                         variant="ghost">Feedback</Button>
-            </Link>}
-            {!session.data?.user && <Link href={'/terms-and-conditions'}>
+            </Link>
+            <Link href={'/terms-and-conditions'}>
                 <Button className={`${pathname.includes('/terms-and-conditions') ? 'bg-blue-600 text-white hover:bg-blue-500' : ''}  `} variant="ghost">Privacy Policy
                     </Button>
-            </Link>}
+            </Link>
         </nav>
     );
 };

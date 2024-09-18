@@ -89,9 +89,18 @@ setIsOpen(false)
                                             <Link  href={'/'}>
                                                 <Button className={`${pathname===('/') ? 'bg-blue-800 text-white' :''} w-full`} >Home</Button>
                                             </Link>
-                                            <Link   href={'/account'}>
-                                                <Button className={`${pathname.includes('/account') ? 'bg-blue-800 text-white' :''} w-full`} >My Account</Button>
-                                            </Link>
+                                            {session.data &&
+
+                                                    <Link
+                                                        href="/dashboard"
+                                                        className="group grid h-auto w-full items-center"
+                                                        prefetch={false}
+                                                    >
+                                                        <Button className={`${pathname===('/dashboard') ? 'bg-blue-800 text-white' :''} w-full`} >Dashboard</Button>
+                                                    </Link>
+
+                                            }
+
                                             <Link  href={'/feedback'}>
                                                 <Button className={`${pathname.includes('/feedback') ? 'bg-blue-800 text-white' :''} w-full`} >Feedback</Button>
                                             </Link>
@@ -100,8 +109,8 @@ setIsOpen(false)
                                             </Link>
                                         </nav>
 
-                                        <Link className="flex flex-col items-center justify-center py-16" href="/">
-                                            <Image src={'/v_logo.png'} width={150} height={150} alt={'logo'}/>
+                                        <Link className="flex flex-col items-center justify-center py-3 mt-8 font-extrabold text-xl  rounded-lg" href="/">
+                                          Sukanya Card
 
                                         </Link>
 
