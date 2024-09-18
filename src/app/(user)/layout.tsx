@@ -53,7 +53,7 @@ export default function DashboardLayout({children}: Readonly<{
                 <div className="">
                     <Suspense>
                     <AuthProvider>
-                        <Header/>
+                        {/*<Header/>*/}
                         {/*<Guard authGuard={true} guestGuard={false}>*/}
                     {children}
                         {/*</Guard>*/}

@@ -6,6 +6,8 @@ import Providers from "@/redux/Provider";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {Toaster} from "@/components/ui/toaster";
+import Header from "@/components/@core/Header";
+import React from "react";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -22,6 +24,7 @@ export default function RootLayout({
         <body className={inter.className}>
         <NextAuthProvider>
             <Providers>
+                <Header/>
                 <ToastContainer/>
                 {children}
                 <Toaster />
