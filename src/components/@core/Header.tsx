@@ -67,10 +67,10 @@ setIsOpen(false)
 
     return (
         <nav className="   bg-gray-100 from-[#57b9e3] to-[#b4cfb4] backdrop-blur-md dark:bg-gray-900 sticky w-full z-20 top-0 start-0 border-b  dark:border-gray-600">
-            <div className="container mx-auto flex  items-center justify-between py-2">
+            <div className="container mx-auto flex  items-center justify-between py-4">
                 <Link className="flex items-center justify-center" href="/">
                     {/*<Image src={'/v_logo.png'} width={70} height={20} alt={'logo'}/>*/}
-                    <span className="ml-2 text-2xl font-bold text-black">Sukanya Card</span>
+                    <span className="ml-2 text-2xl font-extrabold text-blue-700">Sukanya Card</span>
                 </Link>
                 <div className=" flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                     <div className={'flex'}>
@@ -92,11 +92,11 @@ setIsOpen(false)
                                             <Link   href={'/account'}>
                                                 <Button className={`${pathname.includes('/account') ? 'bg-blue-800 text-white' :''} w-full`} >My Account</Button>
                                             </Link>
-                                            <Link  href={'/contact-us'}>
-                                                <Button className={`${pathname.includes('/contact-us') ? 'bg-blue-800 text-white' :''} w-full`} >Contact US</Button>
+                                            <Link  href={'/feedback'}>
+                                                <Button className={`${pathname.includes('/feedback') ? 'bg-blue-800 text-white' :''} w-full`} >Feedback</Button>
                                             </Link>
-                                            <Link  href={'/about-us'}>
-                                                <Button className={`${pathname.includes('/about-us') ? 'bg-blue-800 text-white' :''} w-full`} >About Us</Button>
+                                            <Link  href={'/terms-and-conditions'}>
+                                                <Button className={`${pathname.includes('/terms-and-conditions') ? 'bg-blue-800 text-white' :''} w-full`} >Privacy Policy</Button>
                                             </Link>
                                         </nav>
 

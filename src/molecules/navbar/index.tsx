@@ -22,7 +22,7 @@ const NavBar = () => {
     return (
         <nav className="hidden md:flex space-x-4 mr-4">
             <Link href={'/'}>
-                <Button  className={`${pathname===('/') ? 'bg-blue-600 text-white' :''}`}   variant="ghost">Home</Button>
+                <Button  className={`${pathname===('/') ? 'bg-blue-600 text-white hover:bg-blue-500' :''}`}   variant="ghost">Home</Button>
             </Link>
             {session.data &&
 
@@ -67,13 +67,13 @@ const NavBar = () => {
 //             </NavigationMenuItem>
 // </NavigationMenu>
             }
-            {!session.data?.user && <Link href={'/contact-us'}>
-                <Button className={`${pathname.includes('/contact-us') ? 'bg-blue-600 text-white' : ''}`}
-                        variant="ghost">Contact US</Button>
+            {!session.data?.user && <Link href={'/feedback'}>
+                <Button className={`${pathname.includes('/feedback') ? 'bg-blue-600 text-white hover:bg-blue-500' : ''}  `}
+                        variant="ghost">Feedback</Button>
             </Link>}
-            {!session.data?.user && <Link href={'/about-us'}>
-                <Button className={`${pathname.includes('/about-us') ? 'bg-blue-600 text-white' : ''}`} variant="ghost">About
-                    Us</Button>
+            {!session.data?.user && <Link href={'/terms-and-conditions'}>
+                <Button className={`${pathname.includes('/terms-and-conditions') ? 'bg-blue-600 text-white hover:bg-blue-500' : ''}  `} variant="ghost">Privacy Policy
+                    </Button>
             </Link>}
         </nav>
     );
